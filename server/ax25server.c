@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
 	char *buffer = malloc(size);
 
 	if (getdelim(&buffer, &size, '\r', stdin) < 0) {
-		fprintf(stderr, "Failed to read line\n");
+		fprintf(stderr, "\nFailed to read line\n");
 		exit(1);
 	}
 
