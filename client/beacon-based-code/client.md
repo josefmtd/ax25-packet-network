@@ -37,4 +37,4 @@ Program ini memerlukan library:
 ```
 
 Fungsi-fungsi dasar yang menjadi dasar pada program ini adalah:
-1.
+1. getopt(argc, argv, optstring)
