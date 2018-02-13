@@ -15,7 +15,7 @@ int main (int argc, char **argv){
 	struct full_sockaddr_ax25 server_address;
 	int address_size = sizeof(struct full_sockaddr_ax25);
 
-	socket_file_descriptor = socket(AF_PACKET, SOCK_SEQPACKET, AF_AX25);
+	socket_file_descriptor = socket(AF_AX25, SOCK_SEQPACKET, 0);
 
 	// Check if socket is opened (returns -1 if error)
 
@@ -25,9 +25,9 @@ int main (int argc, char **argv){
 	}
 
 	client_address.fsa_ax25.sax25_family = AF_AX25;
-	ax25_aton_entry("YD0SHY-9", client_address.fsa_ax25.sax25_call.ax25_call);
-	client_address.fsa_ax25.sax25_ndigis = 1;
-	ax25_aton_entry("YD0SHY-9", client_address.fsa_digipeater[0].ax25_call);
+	ax25_aton_entry("YD0SHY-3", client_address.fsa_ax25.sax25_call.ax25_call);
+//	client_address.fsa_ax25.sax25_ndigis = 1;
+//	ax25_aton_entry("YD0SHY-3", client_address.fsa_digipeater[0].ax25_call);
 
 	// Check if socket is bound successfully (returns -1 if error)
 
@@ -37,9 +37,9 @@ int main (int argc, char **argv){
 	}
 
 	server_address.fsa_ax25.sax25_family = AF_AX25;
-	ax25_aton_entry("YD0SHY-10", server_address.fsa_ax25.sax25_call.ax25_call);
+	ax25_aton_entry("YD0SHY-5", server_address.fsa_ax25.sax25_call.ax25_call);
 	server_address.fsa_ax25.sax25_ndigis = 1;
-	ax25_aton_entry("YD0SHY-3", server_address.fsa_ax25.sax25_call.ax25_call);
+	ax25_aton_entry("YD0SHY-10", server_address.fsa_digipeater[0].ax25_call);
 
 	if (connect(socket_file_descriptor, (struct sockaddr *) &server_address, address_size) < 0) {
 		perror("Error making connection");

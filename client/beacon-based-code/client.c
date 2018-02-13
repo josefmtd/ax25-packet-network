@@ -35,11 +35,8 @@ int main(int argc, char *argv[]) {
   char address_buffer[20], *message, *port_call;
   char *port = NULL, *client_call = NULL, *server_call = NULL;
 
-  while ((option = getopt(argc, argv, "d:t:lv")) != -1) {
+  while ((option = getopt(argc, argv, "t:sv")) != -1) {
     switch (option) {
-      case 'd':
-        server_call = optarg;
-        break;
       case 't':
         interval = atoi(optarg);
         break;
@@ -49,32 +46,32 @@ int main(int argc, char *argv[]) {
       case 'v':
         printf("client: %s\n", VERSION);
       default:
-        fprintf(stderr, "usage: client [-d <srv_call>] [-t interval] [-l] [-v] <message>\n");
+        fprintf(stderr, "usage: client [-t interval] [-s] [-v] <port> <server_callsign> <message>\n");
         return 1;
     }
   }
 
   signal(SIGTERM, terminate);
-  
-  if (optind == argc) {
-    fprintf(stderr, "usage: client [-d <srv_call>] [-t interval] [-l] [-v] <message>\n");
+
+  if (optind == argc || optind == argc - 1 || optind == argc - 2) {
+    fprintf(stderr, "usage: client [-t interval] [-s] [-v] <port> <server_callsign> <message>\n");
     return 1;
   }
 
-  message = argv[optind];
+  port = argv[optind];
+  server_call = argv[optind + 1];
+  message = argv[optind + 2];
 
   if (ax25_config_load_ports() == 0) {
     fprintf(stderr, "client: no AX.25 ports defined\n");
     return 1;
   }
-  printf("There is an AX.25 port: %s\n", port); // debug
 
   if (port != NULL) {
-    if ((port_call = ax25_config_get_addr(port))) {
+    if ((port_call = ax25_config_get_addr(port)) == NULL) {
       fprintf(stderr, "client: invalid AX.25 port setting - %s\n", port);
       return 1;
     }
-    return 1;
   }
 
   strcpy(address_buffer, server_call);
@@ -84,25 +81,17 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
-  printf("Server address: %s converted to AX.25 format\n", address_buffer); // debug
-
-  printf("Address found is %s\n", port_call); // debug
-
-  if (client_call != NULL && strcmp(client_call, port_call)) {
+  if (client_call != NULL && strcmp(client_call, port_call) != 0) {
     sprintf(address_buffer, "%s %s", client_call, port_call);
   }
   else {
     strcpy(address_buffer, port_call);
   }
 
-  printf("Address copied to buffer\n"); // debug
-
   if (client_address_length = ax25_aton(address_buffer, &client_address) == -1) {
     fprintf(stderr, "client: unable to convert callsign '%s'\n", address_buffer);
     return 1;
   }
-
-  printf("Client address converted to AX.25 format\n"); // debug
 
   if (!single) {
     if (!daemon_start(FALSE)) {
@@ -113,14 +102,17 @@ int main(int argc, char *argv[]) {
 
   while(1) {
     if ((socket_file_descriptor = socket(AF_AX25, SOCK_SEQPACKET, 0)) == -1) {
+      printf("client: socket error\n");
       return 1;
     }
 
     if (bind(socket_file_descriptor, (struct sockaddr *)&client_address, client_address_length) == -1) {
+      printf("client: bind error\n");
       return 1;
     }
 
     if (connect(socket_file_descriptor, (struct sockaddr *)&server_address, server_address_length) == -1) {
+      printf("client: connect error\n");
       return 1;
     }
 
