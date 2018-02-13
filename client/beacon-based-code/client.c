@@ -73,25 +73,23 @@ int main(int argc, char *argv[]) {
       return 1;
     }
   }
+  printf("Port callsign is %s\n", port_call);
 
   strcpy(address_buffer, server_call);
+
+  printf("Server callsign is %s\n", address_buffer);
+
+  if ((client_address_length = ax25_aton(port_call, &client_address)) == -1) {
+    fprintf(stderr, "client: unable to convert callsign '%s'\n", port_call);
+    return 1;
+  }
 
   if ((server_address_length = ax25_aton(address_buffer, &server_address)) == -1) {
     fprintf(stderr, "client: unable to convert callsign '%s'\n", address_buffer);
     return 1;
   }
 
-  if (client_call != NULL && strcmp(client_call, port_call) != 0) {
-    sprintf(address_buffer, "%s %s", client_call, port_call);
-  }
-  else {
-    strcpy(address_buffer, port_call);
-  }
-
-  if (client_address_length = ax25_aton(address_buffer, &client_address) == -1) {
-    fprintf(stderr, "client: unable to convert callsign '%s'\n", address_buffer);
-    return 1;
-  }
+  printf("Address length is client: %d server: %d\n", client_address_length, server_address_length);
 
   if (!single) {
     if (!daemon_start(FALSE)) {
