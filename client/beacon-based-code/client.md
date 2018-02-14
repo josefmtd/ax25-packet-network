@@ -37,4 +37,12 @@ Program ini memerlukan library:
 ```
 
 Fungsi-fungsi dasar yang menjadi dasar pada program ini adalah:
-1. getopt(argc, argv, optstring)
+1. getopt(argc, argv, optstring), untuk mendapatkan argument optional yang ada pada sebuah fungsi UNIX.
+2. ax25_config_load_ports(void), untuk menguji ketersediaan port AX.25 pada sistem
+3. ax25_config_get_addr(port), untuk mendapatkan port callsign dari sebuah port ax25
+4. ax25_aton(port_call, &client_address), untuk mengubah callsign dalam format ASCII ke spesifikasi network AX.25
+5. ax25_aton(server_call, &server_address), untuk mengubah callsign dalam format ASCII destination dengan digipeater ke spesifikasi network AX.25
+6. socket(AF_AX25, SOCK_SEQPACKET, 0), untuk membuat sebuah socket dengan connection mode
+7. bind(socket_file_descriptor, (struct sockaddr*)&client_address, client_address_length), untuk memberi address socket sesuai dengan address client
+8. connect(socket_file_descriptor, (struct sockaddr*)&server_address, server_address_length), untuk menghubungkan socket client dengan socket server
+9. write(socket_file_descriptor, message, strlen(message)), untuk mengirimkan pesan melalui protokol ax.25 connection mode;
