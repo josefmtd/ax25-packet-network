@@ -21,7 +21,6 @@ RH_RF95 rf95;
 
 uint8_t messageLoop[22] = {0xC0, 0x00, 0x82, 0xA0, 0x98, 0x9E, 0xA4, 0x82, 0x60, 0xB2, 0x88,
                            0x60, 0xA6, 0x90, 0xB2, 0x61, 0x03, 0xF0, 0x48, 0x41, 0x49, 0xC0};
-uint8_t messageLoop2[] = "Halo";
 
 void setup() 
 {
@@ -51,11 +50,7 @@ void setup()
 
 void loop()
 {
-  for (int i = 0; i < sizeof(messageLoop); i++) {
-    Serial.write(messageLoop[i]); 
-  }
-  Serial.println();
-  
+  Serial.write(messageLoop, sizeof(messageLoop)); 
   // Send a message to rf95_server
   rf95.send(messageLoop, sizeof(messageLoop));
   
