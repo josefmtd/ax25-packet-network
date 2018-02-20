@@ -1,0 +1,52 @@
+.TH AXSPAWN 8 "25 August 1996" Linux "Linux System Managers Manual"
+.SH NAME
+axspawn \- Allow automatic login to a Linux system.
+.SH SYNOPSIS
+.B axspawn [--wait, -w]
+.SH DESCRIPTION
+.LP
+.B Axspawn
+will check if the peer is an AX.25 connect, the callsign a valid Amateur
+Radio callsign, strip the SSID, check if UID/GID are valid, allow a
+password-less login if the password-entry in /etc/passwd is \(lq+\(rq or
+empty; in every other case login will prompt for a password.
+.LP
+.B Axspawn
+can create user accounts automatically. You may specify the user shell,
+first and maximum user id, group ID in the config file and (unlike WAMPES)
+create a file \(lq/etc/ax25/ax25.profile\(rq which will be copied to
+~/.profile.
+.SH SECURITY
+.LP
+Auto accounting is a security problem by definition. Unlike WAMPES, which
+creates an empty password field, Axspawn adds an \(lqimpossible\(rq ('+')
+password to /etc/passwd. Login gets called with the \(lq-f\(rq option, thus
+new users have the chance to login without a password. (I guess this won't
+work with the shadow password system).
+.LP
+Of course
+.B axspawn
+does callsign checking: Only letters and numbers are allowed, the callsign
+must be longer than 4 characters and shorter than 6 characters (without
+SSID). There must be at least one digit, and max. two digits within the
+call. The SSID must be within the range of 0 and 15. Please drop me a note
+if you know a valid Amateur Radio callsign that does not fit this pattern
+_and_ can be represented correctly in AX.25.
+.SH OPTIONS
+.TP 5
+.B -w, --wait
+Disables the prompting for a password if the password entry in /etc/passwd
+is either a \(lq+\(rq or blank.
+.SH FILES
+.nf
+/etc/passwd
+.br
+/etc/ax25/ax25.profile
+.br
+/etc/ax25/axspawn.conf
+.fi
+.SH "SEE ALSO"
+.BR axspawn.conf (5),
+.BR ax25d (8).
+.SH AUTHOR
+Joerg Reuter DL1BKE <jreuter@poboxes.com>

@@ -1,0 +1,6 @@
+To compile and install dmascc_cfg, type:
+
+  make
+  make install
+
+That should be all.

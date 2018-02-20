@@ -1,0 +1,57 @@
+.TH INET 3  "20 April 1999" "Linux" "Linux Programmer's Manual"
+.SH NAME
+ax25_aton, ax25_aton_entry, ax25_aton_arglist,
+ax25_ntoa, ax25_cmp, ax25_validate \- AX25 Address manipulation routines
+.SH SYNOPSIS
+.nf
+.B #include <netax25/ax25.h>
+.sp
+.BI "int ax25_aton(const char *" cp ", struct full_sockaddr_ax25 *" fsap ");"
+.sp
+.BI "int ax25_aton_arglist(const char **" cp ", struct full_sockaddr_ax25 *" fsap ");"
+.sp
+.BI "int ax25_aton_entry(const char *" cp ", char *" axp ");"
+.sp
+.BI "char *ax25_ntoa(ax25_address *" axp ");"
+.sp
+.BI "int ax25_cmp(ax25_address *" ax1 ", ax25_address *" ax2 ");"
+.sp
+.BI "int ax25_validate(char *" axp ");"
+.sp 
+.BI "char *ax25_config_file(const char *filename);"
+.fi
+.SH DESCRIPTION
+\fBax25_aton()\fP takes the ASCII string \fIcp\FP that is in the format
+\fIcallsign\fR [[\fIV\fR|\fIVIA\fR] \fIcallsign\fR ...]
+and stores it in \fIfsap\fP in network format. 
+.PP
+\fBax25_aton_entry()\fP takes the ASCII string of a callsign \fIcp\fP
+and stores it in network format in \fIaxp\fP.
+.PP
+\fBax25_aton_arglist()\fP takes a NULL terminated array of strings \fIcp\fP
+and stores it \fIfsap\fP in network format.
+.PP
+\fBax25_ntoa()\fP takes a network format address \fIaxp\fP and returns the
+ASCII representation. The string is returned in a statically allocated
+buffer, which subsequent calls will overwrite.
+.PP
+The \fBax25_cmp()\fP function compares the two ax25 addresses, \fIax1\fP
+and \fIax2\fP, that are in network format and determines wether they
+are identical, differ only by their SSIDs or are different.
+.PP
+The \fBax25_validate\fP function checks to see if the address \fIaxp\fP
+in network format is a correctly formatted address.
+.SH "RETURN VALUE"
+The \fBax25_aton()\fP and \fBax25_aton_arglist()\fP functions return -1 if
+an error occurs otherwise the length of the returned structure.
+.PP
+The \fBax25_aton_entry()\fP function returns -1 if an error occurs otherwise 
+zero.
+.PP
+The \fBax25_cmp()\fP function returns 0 if the two addresses are identical,
+1 if they are different or 2 is only the SSIDs are different.
+.PP
+The \fBax25_validate\fP function returns TRUE if the callsign is valid or
+FALSE if it is not.
+.SH "SEE ALSO"
+.BR ax25 "(4), " netrom "(4), " rose "(4)"

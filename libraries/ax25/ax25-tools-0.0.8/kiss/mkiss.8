@@ -1,0 +1,72 @@
+.TH MKISS 8 "4 July 1999" Linux "Linux System Managers Manual"
+.SH NAME
+mkiss \- Attach a multi KISS interface
+.SH SYNOPSIS
+.B mkiss [-c] [-f] [-h] [-l] [-s speed] [-p pollrate] [-v] ttyinterface pty...
+.SH DESCRIPTION
+.LP
+.B Mkiss
+allows dual port TNCs or multiple TNCs sharing the same serial port to be
+used with the Linux AX.25 kernel software. The AX.25 softare has no support
+for dual port TNCs or multiple TNCs charing the same serial line. The
+different ports are addressed by encoding the port number in the control
+byte of every kiss frame.
+.B Mkiss
+watches a serial port, and routes kiss frames to/from the pseudo ttys. The
+other side of the pseudo ttys are then attached with
+.B kissattach
+as normal.
+.sp 1
+Statistics about the operation of
+.B mkiss
+may be obtained by sending the SIGUSR1 signal to the running program. On
+reception of such a signal
+.B mkiss
+will print a set of statistics to the system log if logging has been
+enabled.
+.sp 1
+Although mention is made of using pseudo ttys as the last arguments,
+these devices may be normal serial ports. However
+.B mkiss
+provides no way in which to set their speed, the speed must therefore be set
+by some other method.
+.SH OPTIONS
+.TP 10
+.BI \-c
+This enables a one-byte checksum on each incoming and outgoing KISS frame on
+the serial port. This checksum is used by G8BPQ KISS roms to maintain the
+integrity of KISS frames.
+.TP 10
+.BI \-f
+This enables a 16-bit checksum on each incoming and outgoing KISS frame on
+the serial port. This checksum is used by Flexnet Node and BayCom Mailbox
+to maintain the integrity of KISS frames.
+.TP 10
+.BI \-h
+Enables hardware handshaking on the serial line to the TNC. The KISS
+specification states that no hardware flow control shall be used so the
+default is off. But some KISS implementations do use hardware flow control.
+.TP 10
+.BI \-l
+Enables system logging, the default is off.
+.TP 10
+.BI "\-s speed"
+Set the speed of the serial port.
+.TP 10
+.BI "\-p pollrate"
+Enables polling. Polled mode is used by G8BPQ KISS roms to prevent
+contention on systems where multiple TNCs share the same serial line.
+Pollrate is interval between polls (in 100ms units).
+.TP 10
+.BI \-v
+Display the version.
+.SH "SEE ALSO"
+.BR kissattach (8),
+.BR ifconfig (8),
+.BR kill (1).
+.SH AUTHORS
+Tomi Manninen OH2BNS <tpmannin@cc.hut.fi>
+.br
+Jonathan Naylor G4KLX <g4klx@g4klx.demon.co.uk>
+.br
+Kevin Uhlir N0BEL <kevinu@flochart.com>

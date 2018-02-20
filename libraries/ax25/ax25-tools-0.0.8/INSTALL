@@ -1,0 +1,34 @@
+Installation Instructions for AX.25 Tools
+=========================================
+
+To make these programs you will need the following:
+	glibc2.1 (Debian 2.1.1-5 or RedHat glibc-2.1.2-3)
+	A Modern kernel (2.2.x)
+	libtool
+	ax25-lib 0.0.5 or better
+	zlib
+
+To build it you type:
+	./configure
+	make
+	make install
+
+By default, it will install the files in /usr/local.  To change this
+so that binaries go in  /usr and the conf files go in /etc 
+	./configure --prefix=/usr  --sysconfdir=/etc --localstatedir=/var
+	make
+	make install
+
+To install example configuration files type
+	make installconf
+
+
+While the configure script attempts to detect broken header files, it may
+be that some slip through.  You can try to use the other header files by
+editing config.h and changing the relevant lines to:
+
+#undef HAVE_NETAX25_AX25_H
+#undef HAVE_NETROM_NETROM_H
+#undef HAVE_NETROSE_ROSE_H
+
+  - Craig Small <csmall@small.dropbear.id.au>
