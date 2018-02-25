@@ -86,22 +86,100 @@ void kiss::processRadio() {
   uint16_t o = 0;
 
   bufferBig[o++] = FEND;
-  bufferBig[o++] = 0x00;
-  
+  // bufferBig[o++] = 0x00;
+
   for(uint16_t i = 0; i < nBytes; i++) {
     put_byte(bufferBig, &o, bufferSmall[i]);
   }
 
   bufferBig[o++] = FEND;
-  
+
   putSerial(bufferBig,o);
 }
 
+#define KISS_noCRC 0x00
+#define KISS_FlexNet 0x20
+#define KISS_SMACK 0x80
+
+void kiss::processSerial() {
+  bool first = true;
+  bool last = false;
+  bool escape = false;
+
+  uint16_t o = 0;
+
+  const unsigned long int end = millis() + 5000;
+
+  while(millis() < end && last == false && o < maxPacketSize) {
+    uint8_t buffer = 0;
+
+    if (!getSerial(&buffer, 1, end)) {
+      debug("ser recv to");
+      break;
+    }
+
+    switch(buffer) {
+      case FEND:
+        if(first) {
+          first = false;
+        }
+        else {
+          last = true;
+        }
+        break;
+      case FESC:
+        escape = true;
+        break;
+      default:
+        if (escape) {
+          if (buffer == TFEND) {
+            bufferSmall[o++] = FEND;
+          }
+          else if (buffer == TFESC) {
+            bufferSmall[o++] = FESC;
+          }
+          else {
+            debug("error escape");
+          }
+
+          escape = false;
+        }
+        else {
+          bufferSmall[o++] = buffer;
+        }
+    }
+  }
+
+  if (last) {
+    if (o > 1) {
+      switch(bufferSmall[0]) {
+        case KISS_noCRC:
+          putRadio(&bufferSmall[0],o);
+          break;
+        case KISS_FlexNet:
+          debug("cannot send flexnet");
+          break;
+        case KISS_SMACK:
+          debug("cannot send SMACK");
+          break;
+        default:
+          debug("frame unknown");
+      }
+    }
+    else {
+      debug("too small for a KISS frame");
+    }
+  }
+}
+
+
+
+/*
 void kiss::processSerial() {
   bool first = true, ok = false, escape = false;
 
   uint16_t o = 0;
-  
+
   const unsigned long int end = millis() + 5000;
   for(;millis() < end;) {
     uint8_t buffer = 0;
@@ -158,9 +236,7 @@ void kiss::processSerial() {
   }
 
   if (ok) {
-    uint8_t cmd = bufferSmall[0] & 0x0F;
-
-    if (cmd == 0x00 && o >= 2) {
+    if (bufferSmall[0] == 0x00 && o >= 2) {
       if (o > 0)
         putRadio(&bufferSmall[1], o);
     }
@@ -180,18 +256,19 @@ void kiss::processSerial() {
     }
   }
 
-  // static uint16_t cnt = 0;
-  // char buf[16];
-  //
-  // if (ok)
-  //   snprintf(buf, sizeof buf, "OK %d", ++cnt);
-  // else
-  //   snprintf(buf, sizeof buf, "FAIL %d", ++cnt);
-  //
-  // buf[sizeof(buf) - 1] = 0x00;
-  //
-  // debug(buf);
+   static uint16_t cnt = 0;
+   char buf[16];
+  
+   if (ok)
+     snprintf(buf, sizeof buf, "OK %d", ++cnt);
+   else
+     snprintf(buf, sizeof buf, "FAIL %d", ++cnt);
+  
+   buf[sizeof(buf) - 1] = 0x00;
+  
+   debug(buf);
 }
+*/
 
 void kiss::loop() {
   if (peekRadio()) {

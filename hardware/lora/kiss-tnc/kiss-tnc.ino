@@ -90,8 +90,8 @@ void setup() {
 
   if (!resetRadio())
     k.debug("Radio init failed");
-
-  k.debug("Radio init success");
+  else
+    k.debug("Radio init success");
 }
 
 void loop() {
